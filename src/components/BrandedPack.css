@@ -1,0 +1,247 @@
+.branded-pack-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+}
+
+.branded-pack-glow {
+  position: absolute;
+  width: min(420px, 90vw);
+  height: min(520px, 70vh);
+  border-radius: 24px;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(56, 189, 248, 0.35) 0%,
+    rgba(99, 102, 241, 0.12) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.branded-pack {
+  position: relative;
+  width: min(280px, 72vw);
+  aspect-ratio: 2.2 / 3.15;
+  perspective: 1400px;
+  z-index: 1;
+}
+
+.branded-pack__crimp {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 14px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1e293b 0px,
+    #1e293b 4px,
+    #334155 4px,
+    #334155 7px
+  );
+  z-index: 4;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.branded-pack__crimp--top {
+  top: 0;
+}
+
+.branded-pack__crimp--bottom {
+  bottom: 0;
+}
+
+.branded-pack__rip-mask {
+  position: absolute;
+  inset: 14px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.branded-pack__half {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.branded-pack__half--left {
+  left: 0;
+}
+
+.branded-pack__half--right {
+  right: 0;
+}
+
+.branded-pack__half-inner {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 200%;
+}
+
+.branded-pack__half-inner--left {
+  left: 0;
+}
+
+.branded-pack__half-inner--right {
+  left: 0;
+  margin-left: -100%;
+}
+
+.branded-pack__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    155deg,
+    #0f172a 0%,
+    #1e293b 35%,
+    #0c1220 100%
+  );
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.branded-pack__foil {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .branded-pack__foil {
+    animation: packFoil 5s ease-in-out infinite;
+  }
+}
+
+@keyframes packFoil {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateX(-8%);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(8%);
+  }
+}
+
+.branded-pack__series {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
+.branded-pack__name {
+  margin: 12px 0 6px;
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  line-height: 1.05;
+}
+
+.branded-pack__edition {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.04em;
+}
+
+.branded-pack__code {
+  margin: 18px 0 0;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  color: #64748b;
+  letter-spacing: 0.15em;
+}
+
+.branded-pack__seal {
+  margin-top: 20px;
+  padding: 6px 14px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 4px;
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.branded-pack__seal span {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #fbbf24;
+}
+
+.branded-pack__tear-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 110%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.95),
+    transparent
+  );
+  z-index: 5;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.branded-pack__cta {
+  position: relative;
+  z-index: 2;
+  border: none;
+  cursor: pointer;
+  padding: 16px 40px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0f172a;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 999px;
+  box-shadow:
+    0 4px 24px rgba(245, 158, 11, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.branded-pack__cta:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .branded-pack__foil {
+    animation: none;
+  }
+}
