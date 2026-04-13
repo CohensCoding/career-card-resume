@@ -16,8 +16,20 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
     <div className="branded-pack-scene">
       <motion.div
         className="branded-pack-glow"
-        animate={{ opacity: ripping ? 1.05 : 0.88, scale: ripping ? 1.04 : 1 }}
-        transition={{ duration: 0.55 }}
+        animate={
+          ripping
+            ? { opacity: 1.05, scale: 1.04 }
+            : reduceMotion
+              ? { opacity: 0.92, scale: 1 }
+              : { opacity: [0.88, 1, 0.88], scale: [1, 1.03, 1] }
+        }
+        transition={
+          ripping
+            ? { duration: 0.55 }
+            : reduceMotion
+              ? { duration: 0 }
+              : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }
+        }
         aria-hidden
       />
 
@@ -48,9 +60,6 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
         }
       >
         <div className="branded-pack" role="img" aria-label="Sealed foil trading card pack">
-          <div className="branded-pack__crimp branded-pack__crimp--top" aria-hidden />
-          <div className="branded-pack__crimp branded-pack__crimp--bottom" aria-hidden />
-
           <div className="branded-pack__rip-mask">
             <motion.div
               className="branded-pack__half branded-pack__half--left"
@@ -138,6 +147,9 @@ function FoilPackFace() {
       <div className="foil-pack__wrinkle" aria-hidden />
       <div className="foil-pack__sweep" aria-hidden />
       <div className="foil-pack__vignette" aria-hidden />
+
+      <div className="foil-pack__edge foil-pack__edge--top" aria-hidden />
+      <div className="foil-pack__edge foil-pack__edge--bottom" aria-hidden />
 
       <header className="foil-pack__banner">
         <span className="foil-pack__banner-text">PMM SERIES • 2026 DROP</span>

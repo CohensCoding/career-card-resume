@@ -109,7 +109,9 @@ export function PackExperience() {
           transition={{ duration: 0.45 }}
         >
           Looking for a new marketer?
-          <span className="pack-experience__subhead">Try your luck</span>
+          <span className="pack-experience__subhead">
+            Rip a pack of candidates and see who you get
+          </span>
         </motion.h1>
       </header>
 
@@ -149,6 +151,7 @@ export function PackExperience() {
                 if (i >= stackDealCount || i < stackTopIndex) return null
                 const depth = i - stackTopIndex
                 const isTop = depth === 0
+                const isHit = isTop && stackReady && (card.rarity === 'bonus' || card.rarity === 'legendary')
 
                 return (
                   <motion.div
@@ -177,6 +180,15 @@ export function PackExperience() {
                       pointerEvents: stackReady && isTop ? 'auto' : 'none',
                     }}
                   >
+                    {isHit && (
+                      <div
+                        className={`pack-experience__hit-fx pack-experience__hit-fx--${card.rarity}`}
+                        aria-hidden
+                      >
+                        <div className="pack-experience__hit-glow" />
+                        <div className="pack-experience__hit-sparkles" />
+                      </div>
+                    )}
                     <CareerCard
                       card={card}
                       variant="stack"

@@ -58,40 +58,6 @@
     drop-shadow(0 48px 80px rgba(0, 0, 0, 0.35));
 }
 
-/* Heat-sealed crimp bands */
-.branded-pack__crimp {
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  height: 12px;
-  z-index: 4;
-  border-radius: 1px;
-  background: repeating-linear-gradient(
-    90deg,
-    #d8dee9 0px,
-    #d8dee9 2px,
-    #94a3b8 2px,
-    #94a3b8 3px,
-    #e8ecf4 3px,
-    #e8ecf4 5px,
-    #64748b 5px,
-    #64748b 6px
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.65),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.25),
-    0 2px 4px rgba(0, 0, 0, 0.35);
-  opacity: 0.92;
-}
-
-.branded-pack__crimp--top {
-  top: 0;
-}
-
-.branded-pack__crimp--bottom {
-  bottom: 0;
-}
-
 .branded-pack__rip-mask {
   position: absolute;
   inset: 11px 0;
@@ -231,6 +197,41 @@
     inset 0 0 40px rgba(0, 0, 0, 0.42),
     inset 0 0 88px rgba(0, 0, 0, 0.28);
   border-radius: 8px;
+}
+
+/* Heat-sealed edges live INSIDE the face so they rip too */
+.foil-pack__edge {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 12px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    #d8dee9 0px,
+    #d8dee9 2px,
+    #94a3b8 2px,
+    #94a3b8 3px,
+    #e8ecf4 3px,
+    #e8ecf4 5px,
+    #64748b 5px,
+    #64748b 6px
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.35);
+  opacity: 0.92;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.foil-pack__edge--top {
+  top: 0;
+}
+
+.foil-pack__edge--bottom {
+  bottom: 0;
 }
 
 /* Top brand strip */
