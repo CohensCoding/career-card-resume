@@ -42,9 +42,9 @@ export const CAREER_CARDS: CareerCardData[] = [
     frontPlaceholderHue: 210,
     backTitle: 'Foundation Builder',
     backBody:
-      'Turner was the proving ground: fast calendars, lots of stakeholders, and campaigns that had to ship in the real world. I learned how approvals, measurement, and cross‑functional execution actually work at scale—and built the muscle for crisp delivery under pressure.',
+      "Media Ad Sales was the proving ground: fast calendars, lots of stakeholders, and campaigns that had to ship in the real world. I learned how approvals, measurement, and cross-functional execution actually work at scale-and built the muscle for crisp delivery under pressure.\n\nFor partners and brands:",
     stats: [
-      { label: 'Partners & brands', value: 'Google, Macy’s + Turner properties' },
+      { label: 'Partners & brands', value: "Google, Macy's, Apple & More" },
       { label: 'Execution', value: 'Enterprise campaign delivery' },
       { label: 'Focus', value: 'Media + integrated marketing' },
     ],
