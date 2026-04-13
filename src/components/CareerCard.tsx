@@ -17,7 +17,7 @@ export function CareerCard({
   card,
   className = '',
   style,
-  reducedMotion: _reducedMotion,
+  reducedMotion = false,
   variant = 'stack',
   presentation = 'full',
 }: Props) {
@@ -117,6 +117,13 @@ export function CareerCard({
     )
   }
 
+  const toggleFlip = () => {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(12)
+    }
+    setFlipped((f) => !f)
+  }
+
   return (
     <div
       className={`career-card-root career-card-root--${variant} ${className}`.trim()}
@@ -125,8 +132,8 @@ export function CareerCard({
     >
       <button
         type="button"
-        className={`career-card ${rarityClass} ${flipped ? 'is-flipped' : ''}`}
-        onClick={() => setFlipped((f) => !f)}
+        className={`career-card ${rarityClass}`}
+        onClick={toggleFlip}
         aria-pressed={flipped}
         aria-label={
           flipped
@@ -134,10 +141,12 @@ export function CareerCard({
             : `Show back of ${card.company} card`
         }
       >
-        <div className="career-card__inner">
-          <div className="career-card__face career-card__face--front">{frontFace}</div>
+        <div
+          className={`career-card__inner ${flipped ? 'is-flipped' : ''} ${reducedMotion ? 'career-card__inner--reduced-motion' : ''}`.trim()}
+        >
+          <div className="career-card__face career-card__face--front card-front">{frontFace}</div>
 
-          <div className="career-card__face career-card__face--back">{backFace}</div>
+          <div className="career-card__face career-card__face--back card-back">{backFace}</div>
         </div>
       </button>
     </div>

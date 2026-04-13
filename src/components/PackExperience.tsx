@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { CAREER_CARDS } from '../data/cards'
-import { playPackRipSound } from '../lib/packRipSound'
 import { BrandedPack } from './BrandedPack'
 import { CareerCard } from './CareerCard'
 import './PackExperience.css'
 
 type Phase = 'landing' | 'ripping' | 'stack' | 'gallery'
 
-const RIP_MS = 2200
+/** Matches BrandedPack: RIP_ANTICIPATION_S + RIP_MOTION_S + reveal tail */
+const RIP_MS = 1750
 const DEAL_GAP_MS = 440
 
 export function PackExperience() {
   const reduceMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>('landing')
+  const [sessionKey, setSessionKey] = useState(0)
   const [stackDealCount, setStackDealCount] = useState(0)
   const [stackTopIndex, setStackTopIndex] = useState(0)
   const [expandedGalleryId, setExpandedGalleryId] = useState<string | null>(null)
@@ -25,10 +26,21 @@ export function PackExperience() {
   const stackReady = stackDealCount >= n
   const isLastInStack = stackTopIndex >= n - 1
 
-  const openPack = useCallback(() => {
-    if (!reduceMotion) {
-      playPackRipSound()
+  const resetPack = useCallback(() => {
+    if (ripTimer.current) {
+      clearTimeout(ripTimer.current)
+      ripTimer.current = null
     }
+    dealTimers.current.forEach(clearTimeout)
+    dealTimers.current = []
+    setExpandedGalleryId(null)
+    setStackDealCount(0)
+    setStackTopIndex(0)
+    setSessionKey((k) => k + 1)
+    setPhase('landing')
+  }, [])
+
+  const openPack = useCallback(() => {
     if (reduceMotion) {
       setPhase('stack')
       return
@@ -118,7 +130,7 @@ export function PackExperience() {
       <AnimatePresence mode="wait">
         {phase === 'landing' && (
           <motion.div
-            key="landing"
+            key={`landing-${sessionKey}`}
             className="pack-experience__stage pack-experience__stage--landing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -198,11 +210,6 @@ export function PackExperience() {
                 )
               })}
             </div>
-            {stackReady && (
-              <p className="pack-experience__tier-label pack-experience__tier-label--stack">
-                {CAREER_CARDS[stackTopIndex]?.tierLabel}
-              </p>
-            )}
           </div>
 
           <div className="pack-experience__stack-actions">
@@ -233,6 +240,13 @@ export function PackExperience() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.45 }}
         >
+          {!reduceMotion && (
+            <div className="pack-experience__confetti" aria-hidden>
+              {Array.from({ length: 14 }, (_, i) => (
+                <span key={i} className={`pack-experience__confetti-bit pack-experience__confetti-bit--${i % 7}`} />
+              ))}
+            </div>
+          )}
           <p className="pack-experience__pull-label">Your career pull</p>
           <div className="pack-experience__cards">
             {CAREER_CARDS.map((card) => (
@@ -263,6 +277,11 @@ export function PackExperience() {
                 </span>
               </div>
             ))}
+          </div>
+          <div className="pack-experience__gallery-actions">
+            <button type="button" className="pack-experience__reopen-pack" onClick={resetPack}>
+              Reseal &amp; rip again
+            </button>
           </div>
         </motion.div>
       )}
@@ -302,9 +321,6 @@ export function PackExperience() {
                   variant="expanded"
                   reducedMotion={!!reduceMotion}
                 />
-                <span className="pack-experience__tier-label pack-experience__tier-label--lightbox">
-                  {expandedCard.tierLabel}
-                </span>
               </div>
             </motion.div>
           </motion.div>

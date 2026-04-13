@@ -6,11 +6,20 @@ type Props = {
   onOpenPack: () => void
 }
 
-const RIP_DURATION = 1.38
+/** Anticipation hold + main rip motion — keep in sync with PackExperience RIP_MS */
+const RIP_ANTICIPATION_S = 0.28
+const RIP_MOTION_S = 0.82
+const RIP_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
 export function BrandedPack({ phase, onOpenPack }: Props) {
   const ripping = phase === 'ripping'
   const reduceMotion = useReducedMotion()
+
+  const ripTransition = {
+    delay: reduceMotion ? 0 : RIP_ANTICIPATION_S,
+    duration: reduceMotion ? 0.01 : RIP_MOTION_S,
+    ease: RIP_EASE,
+  }
 
   return (
     <div className="branded-pack-scene">
@@ -18,14 +27,14 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
         className="branded-pack-glow"
         animate={
           ripping
-            ? { opacity: 1.05, scale: 1.04 }
+            ? { opacity: 1.12, scale: 1.08 }
             : reduceMotion
               ? { opacity: 0.92, scale: 1 }
               : { opacity: [0.88, 1, 0.88], scale: [1, 1.03, 1] }
         }
         transition={
           ripping
-            ? { duration: 0.55 }
+            ? { duration: 0.42, ease: RIP_EASE }
             : reduceMotion
               ? { duration: 0 }
               : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }
@@ -37,19 +46,20 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
         className="branded-pack-float"
         animate={
           ripping
-            ? { y: 14, rotateX: 0, rotateY: 0, rotateZ: 0 }
+            ? { y: 10, rotateX: 2, rotateY: 0, rotateZ: 0, scale: 1 }
             : reduceMotion
-              ? { y: 0, rotateX: 0, rotateY: 0, rotateZ: 0 }
+              ? { y: 0, rotateX: 0, rotateY: 0, rotateZ: 0, scale: 1 }
               : {
                   y: [0, -14, 0],
                   rotateX: 0,
                   rotateY: [-4, 4, -4],
                   rotateZ: [0, 0.6, 0],
+                  scale: 1,
                 }
         }
         transition={
           ripping
-            ? { duration: 0.5 }
+            ? { duration: 0.45, ease: RIP_EASE }
             : reduceMotion
               ? { duration: 0 }
               : {
@@ -59,19 +69,30 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
                 }
         }
       >
-        <div className="branded-pack" role="img" aria-label="Sealed foil trading card pack">
-          <div className="branded-pack__rip-mask">
+        <div className={`branded-pack ${ripping ? 'branded-pack--ripping' : ''}`} role="img" aria-label="Sealed foil trading card pack">
+          <div className={`branded-pack__rip-mask ${ripping ? 'is-ripping' : ''}`}>
             <motion.div
               className="branded-pack__half branded-pack__half--left"
               animate={
                 ripping
-                  ? { x: -96, rotateZ: -11, opacity: 0.92 }
-                  : { x: 0, rotateZ: 0, opacity: 1 }
+                  ? {
+                      x: -112,
+                      y: -36,
+                      rotateZ: -15,
+                      rotateY: -18,
+                      opacity: 0.9,
+                      filter: reduceMotion ? 'blur(0px)' : 'blur(1.2px)',
+                    }
+                  : {
+                      x: 0,
+                      y: 0,
+                      rotateZ: 0,
+                      rotateY: 0,
+                      opacity: 1,
+                      filter: 'blur(0px)',
+                    }
               }
-              transition={{
-                duration: reduceMotion ? 0.01 : RIP_DURATION,
-                ease: [0.19, 1, 0.32, 1],
-              }}
+              transition={ripTransition}
             >
               <div className="branded-pack__half-inner branded-pack__half-inner--left">
                 <FoilPackFace />
@@ -82,13 +103,24 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
               className="branded-pack__half branded-pack__half--right"
               animate={
                 ripping
-                  ? { x: 96, rotateZ: 11, opacity: 0.92 }
-                  : { x: 0, rotateZ: 0, opacity: 1 }
+                  ? {
+                      x: 112,
+                      y: -36,
+                      rotateZ: 15,
+                      rotateY: 18,
+                      opacity: 0.9,
+                      filter: reduceMotion ? 'blur(0px)' : 'blur(1.2px)',
+                    }
+                  : {
+                      x: 0,
+                      y: 0,
+                      rotateZ: 0,
+                      rotateY: 0,
+                      opacity: 1,
+                      filter: 'blur(0px)',
+                    }
               }
-              transition={{
-                duration: reduceMotion ? 0.01 : RIP_DURATION,
-                ease: [0.19, 1, 0.32, 1],
-              }}
+              transition={ripTransition}
             >
               <div className="branded-pack__half-inner branded-pack__half-inner--right">
                 <FoilPackFace />
@@ -99,22 +131,37 @@ export function BrandedPack({ phase, onOpenPack }: Props) {
           {ripping && (
             <>
               <motion.div
+                className="branded-pack__tear-burst"
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: [0, 0.85, 0], scale: [0.6, 1.35, 1.55] }}
+                transition={{
+                  duration: reduceMotion ? 0.01 : 0.72,
+                  ease: RIP_EASE,
+                  delay: reduceMotion ? 0 : RIP_ANTICIPATION_S * 0.85,
+                }}
+                aria-hidden
+              />
+              <motion.div
                 className="branded-pack__tear-flash"
                 initial={{ opacity: 0, scaleY: 0.35 }}
-                animate={{ opacity: [0, 1, 0.4, 0], scaleY: 1 }}
+                animate={{ opacity: [0, 0.95, 0.28, 0], scaleY: 1 }}
                 transition={{
-                  duration: reduceMotion ? 0.01 : 0.88,
-                  times: [0, 0.12, 0.38, 1],
+                  duration: reduceMotion ? 0.01 : 0.72,
+                  times: [0, 0.14, 0.4, 1],
+                  delay: reduceMotion ? 0 : RIP_ANTICIPATION_S * 0.92,
+                  ease: RIP_EASE,
                 }}
                 aria-hidden
               />
               <motion.div
                 className="branded-pack__tear-crack"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.95, 0] }}
+                animate={{ opacity: [0, 0.28, 0] }}
                 transition={{
-                  duration: reduceMotion ? 0.01 : 0.95,
-                  times: [0, 0.18, 1],
+                  duration: reduceMotion ? 0.01 : 0.55,
+                  times: [0, 0.22, 1],
+                  delay: reduceMotion ? 0 : RIP_ANTICIPATION_S * 0.95,
+                  ease: RIP_EASE,
                 }}
                 aria-hidden
               />

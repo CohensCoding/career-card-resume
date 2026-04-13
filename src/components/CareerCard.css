@@ -7,6 +7,20 @@
   width: min(288px, 88vw);
 }
 
+@media (max-width: 520px) {
+  .career-card-root--stack {
+    width: min(302px, 90vw);
+  }
+
+  .career-card__body {
+    font-size: 12px;
+  }
+
+  .career-card__back-title {
+    font-size: 15px;
+  }
+}
+
 .career-card-root--gallery {
   width: min(172px, 44vw);
 }
@@ -37,7 +51,8 @@
   border-radius: 14px;
   box-sizing: border-box;
   transform-style: preserve-3d;
-  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transform-style: preserve-3d;
+  touch-action: manipulation;
 }
 
 .career-card:focus-visible {
@@ -45,14 +60,20 @@
   outline-offset: 4px;
 }
 
-.career-card.is-flipped {
-  transform: rotateY(180deg);
-}
-
 .career-card__inner {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.career-card__inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.career-card__inner--reduced-motion {
+  transition: none !important;
 }
 
 .career-card__face {
@@ -70,10 +91,11 @@
 
 .career-card__face--front {
   background: #0f1419;
+  transform: translateZ(1px);
 }
 
 .career-card__face--back {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
   background: linear-gradient(165deg, #1a2332 0%, #0d1218 100%);
   padding: 0;
   display: flex;
