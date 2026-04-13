@@ -21,6 +21,12 @@ export function PackExperience() {
 
   const ripTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dealTimers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const swipeRef = useRef<{
+    active: boolean
+    startX: number
+    startY: number
+    consumed: boolean
+  }>({ active: false, startX: 0, startY: 0, consumed: false })
 
   const n = CAREER_CARDS.length
   const stackReady = stackDealCount >= n
@@ -92,6 +98,48 @@ export function PackExperience() {
       return
     }
     setStackTopIndex((s) => s + 1)
+  }
+
+  const goPrevStack = () => {
+    if (!stackReady) return
+    setStackTopIndex((s) => Math.max(0, s - 1))
+  }
+
+  const onTopCardTouchStart = (e: React.TouchEvent) => {
+    if (phase !== 'stack' || !stackReady) return
+    const t = e.touches[0]
+    if (!t) return
+    swipeRef.current = { active: true, startX: t.clientX, startY: t.clientY, consumed: false }
+  }
+
+  const onTopCardTouchMove = (e: React.TouchEvent) => {
+    const swipe = swipeRef.current
+    if (!swipe.active || swipe.consumed) return
+    const t = e.touches[0]
+    if (!t) return
+    const dx = t.clientX - swipe.startX
+    const dy = t.clientY - swipe.startY
+
+    // Prefer vertical scroll unless horizontal intent is clear.
+    if (Math.abs(dx) < 18 && Math.abs(dy) > 18) return
+
+    const threshold = 54
+    if (Math.abs(dx) < threshold) return
+    if (Math.abs(dx) < Math.abs(dy) * 1.25) return
+
+    swipe.consumed = true
+    swipeRef.current = swipe
+    e.preventDefault()
+
+    if (dx < 0) {
+      goNextStack()
+    } else {
+      goPrevStack()
+    }
+  }
+
+  const onTopCardTouchEnd = () => {
+    swipeRef.current.active = false
   }
 
   const expandedCard = expandedGalleryId
@@ -169,6 +217,10 @@ export function PackExperience() {
                   <motion.div
                     key={card.id}
                     className="pack-experience__stack-layer"
+                    onTouchStart={stackReady && isTop ? onTopCardTouchStart : undefined}
+                    onTouchMove={stackReady && isTop ? onTopCardTouchMove : undefined}
+                    onTouchEnd={stackReady && isTop ? onTopCardTouchEnd : undefined}
+                    onTouchCancel={stackReady && isTop ? onTopCardTouchEnd : undefined}
                     initial={
                       reduceMotion
                         ? false

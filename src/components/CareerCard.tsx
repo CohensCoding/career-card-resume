@@ -74,6 +74,7 @@ export function CareerCard({
       <div className="career-card__foil career-card__foil--back" aria-hidden />
       <div className="career-card__back-scroller">
         <header className="career-card__back-header">
+          {card.years && <span className="career-card__years">{card.years}</span>}
           <p className="career-card__role-line">{card.role}</p>
           <p className="career-card__company">{card.company}</p>
           <h3 className="career-card__back-title">{card.backTitle}</h3>

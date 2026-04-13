@@ -506,6 +506,28 @@
   color: #38bdf8;
 }
 
+.career-card__back-header {
+  position: relative;
+  padding-right: 84px;
+}
+
+.career-card__years {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.75);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(2, 6, 12, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
 .career-card__back-title {
   margin: 0 0 4px;
   font-size: 14px;

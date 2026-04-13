@@ -14,6 +14,8 @@ export type CareerCardData = {
   frontAlt: string
   frontPlaceholderHue: number
   backTitle: string
+  /** Small date range shown top-right on back face. */
+  years?: string
   /** Longer narrative for card back (top section) */
   backBody: string
   /** Tight accomplishment lines (table) */
@@ -41,8 +43,9 @@ export const CAREER_CARDS: CareerCardData[] = [
     frontAlt: 'Rookie card illustration — Jake Cohen at Turner Broadcasting',
     frontPlaceholderHue: 210,
     backTitle: 'Foundation Builder',
+    years: '2012–2016',
     backBody:
-      "Media Ad Sales was the proving ground: fast calendars, lots of stakeholders, and campaigns that had to ship in the real world. I learned how approvals, measurement, and cross-functional execution actually work at scale-and built the muscle for crisp delivery under pressure.\n\nFor partners and brands:",
+      'Media ad sales was the proving ground: fast calendars, lots of stakeholders, and campaigns that had to ship in the real world.\nI learned how approvals, measurement, and cross-functional execution actually work at scale-and built the muscle for crisp delivery under pressure.',
     stats: [
       { label: 'Partners & brands', value: "Google, Macy's, Apple & More" },
       { label: 'Execution', value: 'Enterprise campaign delivery' },
@@ -61,6 +64,7 @@ export const CAREER_CARDS: CareerCardData[] = [
     frontAlt: 'Jake Cohen — Fama (Builder) era card',
     frontPlaceholderHue: 200,
     backTitle: 'Category Creator',
+    years: '2016–2020',
     backBody:
       'As the first marketer, I built the 0→1 foundation: positioning, narrative, site + demand programs, and sales enablement. I helped shape a clear category story—then turned it into repeatable campaigns and funnel instrumentation so growth wasn’t a one‑off launch.',
     stats: [
@@ -82,6 +86,7 @@ export const CAREER_CARDS: CareerCardData[] = [
     frontAlt: 'Jake Cohen — Hopps (Operator) era card',
     frontPlaceholderHue: 280,
     backTitle: 'Startup Scaler',
+    years: '2020–2023',
     backBody:
       'At Hopps, I operated marketing through real scale: sharpen messaging as the product evolved, keep demand + lifecycle aligned with sales reality, and make metrics tell the truth to leadership and investors. The focus was turning traction into a repeatable growth engine.',
     stats: [
@@ -103,6 +108,7 @@ export const CAREER_CARDS: CareerCardData[] = [
     frontAlt: 'Jake Cohen — Cars Commerce All Star card',
     frontPlaceholderHue: 195,
     backTitle: 'System Builder',
+    years: '2023–Present',
     backBody:
       'Built PMM from scratch: segmentation + messaging, launch rhythm, enablement, and customer proof. Partnered on retention/revenue levers (including churn root causes) and shipped AI-assisted workflows that reduced manual load and improved consistency.',
     stats: [

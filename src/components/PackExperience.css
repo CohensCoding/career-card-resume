@@ -592,6 +592,11 @@
   }
 
   .pack-experience__stack-actions {
+    margin-top: 18px;
+    padding-top: 6px;
+  }
+
+  .pack-experience__stack-actions {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
     justify-items: center;
