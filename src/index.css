@@ -1,7 +1,7 @@
 :root {
   --text: #94a3b8;
   --text-h: #f8fafc;
-  --bg: #070b12;
+  --bg: #030406;
   --accent: #38bdf8;
   --sans: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
@@ -24,8 +24,8 @@
 body {
   margin: 0;
   min-height: 100svh;
-  background: radial-gradient(ellipse 120% 80% at 50% -20%, #1e293b 0%, transparent 55%),
-    var(--bg);
+  /* Flat, deep field so the pack reads as the lit object */
+  background: var(--bg);
 }
 
 #root {

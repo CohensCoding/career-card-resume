@@ -43,47 +43,142 @@
   min-height: min(52vh, 480px);
 }
 
-.pack-experience__cards-wrap {
+.pack-experience__stack-stage {
+  position: relative;
+  flex: 1;
   width: 100%;
-  max-width: 1200px;
-  margin-top: 8px;
-}
-
-.pack-experience__cards-wrap--bursting {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
+  max-width: 520px;
+  min-height: min(560px, 78vh);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  padding-top: 12vh;
+  justify-content: flex-start;
+  padding-top: 8px;
+  margin-top: 4px;
 }
 
-.pack-experience__cards-wrap--bursting::before {
-  content: '';
+.pack-experience__stack-stage-bg {
   position: absolute;
   inset: 0;
-  background: rgba(2, 6, 12, 0.78);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 35%,
+    rgba(22, 30, 46, 0.55) 0%,
+    rgba(3, 4, 6, 0.5) 72%
+  );
+  pointer-events: none;
   z-index: 0;
 }
 
-.pack-experience__cards-wrap--bursting .pack-experience__cards {
+.pack-experience__stack-pile-wrap {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
-.pack-experience__cards-wrap--bursting .pack-experience__burst-card {
-  pointer-events: auto;
+.pack-experience__stack-pile {
+  position: relative;
+  width: min(320px, 92vw);
+  height: min(440px, 58vh);
+  flex: 1;
+  max-height: 520px;
+}
+
+.pack-experience__stack-layer {
+  position: absolute;
+  top: 0;
+  width: max-content;
+  transform-origin: top center;
+}
+
+.pack-experience__stack-actions {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.pack-experience__stack-count {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748b;
+  justify-self: start;
+}
+
+.pack-experience__stack-flip-hint {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: rgba(15, 23, 42, 0.45);
+  white-space: nowrap;
+}
+
+.pack-experience__stack-next {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
+  border: none;
+  cursor: pointer;
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0f172a;
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pack-experience__stack-next:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pack-experience__stack-next:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.pack-experience__stack-next:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 3px;
 }
 
 .pack-experience__cards-wrap--gallery {
   position: relative;
   z-index: 1;
-  margin-top: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 20px;
+  padding: 8px 0 16px;
 }
 
 .pack-experience__pull-label {
@@ -102,17 +197,107 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  gap: clamp(10px, 2vw, 18px);
+  gap: clamp(12px, 2.5vw, 20px);
 }
 
-.pack-experience__burst-card {
+.pack-experience__gallery-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pack-experience__tier-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.pack-experience__tier-label--stack {
+  margin: 6px 0 0;
   flex-shrink: 0;
 }
 
-@media (max-width: 900px) {
-  .pack-experience__cards-wrap--bursting {
-    padding-top: 20vh;
-  }
+.pack-experience__tier-label--gallery {
+  max-width: min(172px, 44vw);
+}
+
+.pack-experience__tier-label--lightbox {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.pack-experience__gallery-thumb {
+  position: relative;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.22s ease;
+}
+
+.pack-experience__gallery-thumb:hover {
+  transform: translateY(-3px);
+}
+
+.pack-experience__gallery-thumb:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 4px;
+  border-radius: 16px;
+}
+
+.pack-experience__lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(2, 6, 12, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.pack-experience__lightbox-panel {
+  position: relative;
+  max-width: min(420px, 94vw);
+  width: 100%;
+}
+
+.pack-experience__lightbox-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pack-experience__lightbox-close {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.pack-experience__lightbox-close:hover {
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.pack-experience__lightbox-close:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }
 
 .pack-experience__footer {
@@ -142,4 +327,30 @@
   outline: 2px solid #38bdf8;
   outline-offset: 4px;
   border-radius: 2px;
+}
+
+@media (max-width: 520px) {
+  .pack-experience__stack-pile {
+    height: min(400px, 52vh);
+  }
+
+  .pack-experience__stack-actions {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .pack-experience__stack-count {
+    justify-self: center;
+  }
+
+  .pack-experience__stack-flip-hint {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .pack-experience__stack-next {
+    grid-row: 3;
+  }
 }

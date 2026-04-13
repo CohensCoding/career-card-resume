@@ -1,46 +1,99 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { CAREER_CARDS } from '../data/cards'
+import { playPackRipSound } from '../lib/packRipSound'
 import { BrandedPack } from './BrandedPack'
 import { CareerCard } from './CareerCard'
 import './PackExperience.css'
 
-type Phase = 'landing' | 'ripping' | 'bursting' | 'gallery'
+type Phase = 'landing' | 'ripping' | 'stack' | 'gallery'
 
-const RIP_MS = 780
-const BURST_STAGGER = 0.11
-/** After last card spring, settle into gallery layout */
-const BURST_TAIL_MS = 950
+const RIP_MS = 2200
+const DEAL_GAP_MS = 440
 
 export function PackExperience() {
   const reduceMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>('landing')
+  const [stackDealCount, setStackDealCount] = useState(0)
+  const [stackTopIndex, setStackTopIndex] = useState(0)
+  const [expandedGalleryId, setExpandedGalleryId] = useState<string | null>(null)
+
   const ripTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dealTimers = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const n = CAREER_CARDS.length
+  const stackReady = stackDealCount >= n
+  const isLastInStack = stackTopIndex >= n - 1
 
   const openPack = useCallback(() => {
+    if (!reduceMotion) {
+      playPackRipSound()
+    }
     if (reduceMotion) {
-      setPhase('gallery')
+      setPhase('stack')
       return
     }
     setPhase('ripping')
     ripTimer.current = setTimeout(() => {
-      setPhase('bursting')
+      setPhase('stack')
     }, RIP_MS)
   }, [reduceMotion])
 
   useEffect(() => {
     return () => {
       if (ripTimer.current) clearTimeout(ripTimer.current)
+      dealTimers.current.forEach(clearTimeout)
     }
   }, [])
 
   useEffect(() => {
-    if (phase !== 'bursting' || reduceMotion) return
-    const n = CAREER_CARDS.length
-    const delayMs = (n - 1) * BURST_STAGGER * 1000 + BURST_TAIL_MS
-    const t = setTimeout(() => setPhase('gallery'), delayMs)
-    return () => clearTimeout(t)
-  }, [phase, reduceMotion])
+    dealTimers.current.forEach(clearTimeout)
+    dealTimers.current = []
+
+    if (phase !== 'stack') return
+
+    if (reduceMotion) {
+      setStackDealCount(n)
+      setStackTopIndex(0)
+      return
+    }
+
+    setStackDealCount(0)
+    setStackTopIndex(0)
+
+    for (let i = 1; i <= n; i++) {
+      const t = window.setTimeout(() => setStackDealCount(i), DEAL_GAP_MS * i)
+      dealTimers.current.push(t)
+    }
+
+    return () => {
+      dealTimers.current.forEach(clearTimeout)
+      dealTimers.current = []
+    }
+  }, [phase, reduceMotion, n])
+
+  const goNextStack = () => {
+    if (!stackReady) return
+    if (isLastInStack) {
+      setPhase('gallery')
+      setExpandedGalleryId(null)
+      return
+    }
+    setStackTopIndex((s) => s + 1)
+  }
+
+  const expandedCard = expandedGalleryId
+    ? CAREER_CARDS.find((c) => c.id === expandedGalleryId)
+    : null
+
+  useEffect(() => {
+    if (!expandedGalleryId) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setExpandedGalleryId(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [expandedGalleryId])
 
   return (
     <div className="pack-experience">
@@ -55,8 +108,8 @@ export function PackExperience() {
           }}
           transition={{ duration: 0.45 }}
         >
-          Unpack a Product Marketer
-          <span className="pack-experience__subhead">Built for AI and Growth</span>
+          Looking for a new marketer?
+          <span className="pack-experience__subhead">Try your luck</span>
         </motion.h1>
       </header>
 
@@ -87,28 +140,164 @@ export function PackExperience() {
         )}
       </AnimatePresence>
 
-      {(phase === 'bursting' || phase === 'gallery') && (
-        <div
-          className={`pack-experience__cards-wrap pack-experience__cards-wrap--${phase}`}
-        >
-          {phase === 'gallery' && (
-            <p className="pack-experience__pull-label">Your career pull</p>
-          )}
-          <div className="pack-experience__cards">
-            {CAREER_CARDS.map((card, i) => (
-              <BurstCard
-                key={card.id}
-                index={i}
-                total={CAREER_CARDS.length}
-                phase={phase}
-                reduceMotion={!!reduceMotion}
-              >
-                <CareerCard card={card} reducedMotion={!!reduceMotion} />
-              </BurstCard>
-            ))}
+      {phase === 'stack' && (
+        <div className="pack-experience__stack-stage">
+          <div className="pack-experience__stack-stage-bg" aria-hidden />
+          <div className="pack-experience__stack-pile-wrap">
+            <div className="pack-experience__stack-pile">
+              {CAREER_CARDS.map((card, i) => {
+                if (i >= stackDealCount || i < stackTopIndex) return null
+                const depth = i - stackTopIndex
+                const isTop = depth === 0
+
+                return (
+                  <motion.div
+                    key={card.id}
+                    className="pack-experience__stack-layer"
+                    initial={
+                      reduceMotion
+                        ? false
+                        : { x: '-50%', y: 140, opacity: 0, scale: 0.82, rotateZ: -6 }
+                    }
+                    animate={{
+                      x: '-50%',
+                      y: depth * 16,
+                      opacity: 1,
+                      scale: 1 - depth * 0.028,
+                      rotateZ: depth * 1.2,
+                      zIndex: 50 - depth,
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 260,
+                      damping: 26,
+                    }}
+                    style={{
+                      left: '50%',
+                      pointerEvents: stackReady && isTop ? 'auto' : 'none',
+                    }}
+                  >
+                    <CareerCard
+                      card={card}
+                      variant="stack"
+                      reducedMotion={!!reduceMotion}
+                    />
+                  </motion.div>
+                )
+              })}
+            </div>
+            {stackReady && (
+              <p className="pack-experience__tier-label pack-experience__tier-label--stack">
+                {CAREER_CARDS[stackTopIndex]?.tierLabel}
+              </p>
+            )}
+          </div>
+
+          <div className="pack-experience__stack-actions">
+            <span className="pack-experience__stack-count">
+              {stackReady
+                ? `Card ${stackTopIndex + 1} of ${n}`
+                : `Dealing… ${stackDealCount}/${n}`}
+            </span>
+            <span className="pack-experience__stack-flip-hint" aria-hidden>
+              Click card to flip
+            </span>
+            <button
+              type="button"
+              className="pack-experience__stack-next"
+              disabled={!stackReady}
+              onClick={goNextStack}
+            >
+              {isLastInStack ? 'Lay out collection' : 'Next card'}
+            </button>
           </div>
         </div>
       )}
+
+      {phase === 'gallery' && (
+        <motion.div
+          className="pack-experience__cards-wrap pack-experience__cards-wrap--gallery"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45 }}
+        >
+          <p className="pack-experience__pull-label">Your career pull</p>
+          <div className="pack-experience__cards">
+            {CAREER_CARDS.map((card) => (
+              <div key={card.id} className="pack-experience__gallery-cell">
+                <motion.div
+                  layout
+                  className="pack-experience__gallery-thumb"
+                  onClick={() => setExpandedGalleryId(card.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setExpandedGalleryId(card.id)
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open large view of ${card.company}`}
+                >
+                  <CareerCard
+                    card={card}
+                    variant="gallery"
+                    presentation="frontOnly"
+                    reducedMotion={!!reduceMotion}
+                  />
+                </motion.div>
+                <span className="pack-experience__tier-label pack-experience__tier-label--gallery">
+                  {card.tierLabel}
+                </span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      <AnimatePresence>
+        {expandedCard && (
+          <motion.div
+            key="lightbox"
+            className="pack-experience__lightbox"
+            role="presentation"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setExpandedGalleryId(null)}
+          >
+            <motion.div
+              className="pack-experience__lightbox-panel"
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="pack-experience__lightbox-close"
+                onClick={() => setExpandedGalleryId(null)}
+                aria-label="Close card view"
+              >
+                ×
+              </button>
+              <div className="pack-experience__lightbox-card-wrap">
+                <CareerCard
+                  key={expandedCard.id}
+                  card={expandedCard}
+                  variant="expanded"
+                  reducedMotion={!!reduceMotion}
+                />
+                <span className="pack-experience__tier-label pack-experience__tier-label--lightbox">
+                  {expandedCard.tierLabel}
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="pack-experience__footer">
         <a
@@ -121,75 +310,5 @@ export function PackExperience() {
         </a>
       </footer>
     </div>
-  )
-}
-
-type BurstProps = {
-  children: ReactNode
-  index: number
-  total: number
-  phase: Phase
-  reduceMotion: boolean
-}
-
-function BurstCard({
-  children,
-  index,
-  total,
-  phase,
-  reduceMotion,
-}: BurstProps) {
-  const mid = (total - 1) / 2
-  const spread = 118
-  const targetX = (index - mid) * spread
-
-  return (
-    <motion.div
-      className="pack-experience__burst-card"
-      initial={
-        reduceMotion || phase === 'gallery'
-          ? false
-          : {
-              x: 0,
-              y: 120,
-              scale: 0.35,
-              opacity: 0,
-              rotateZ: -18 + index * 6,
-            }
-      }
-      animate={
-        reduceMotion
-          ? { x: 0, y: 0, scale: 1, opacity: 1, rotateZ: 0 }
-          : phase === 'bursting'
-            ? {
-                x: targetX,
-                y: 0,
-                scale: 1,
-                opacity: 1,
-                rotateZ: 0,
-                transition: {
-                  delay: index * BURST_STAGGER,
-                  type: 'spring',
-                  stiffness: 280,
-                  damping: 24,
-                },
-              }
-            : {
-                x: 0,
-                y: 0,
-                scale: 1,
-                opacity: 1,
-                rotateZ: 0,
-                transition: {
-                  type: 'spring',
-                  stiffness: 340,
-                  damping: 30,
-                },
-              }
-      }
-      layout={phase === 'gallery'}
-    >
-      {children}
-    </motion.div>
   )
 }

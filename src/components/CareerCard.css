@@ -1,7 +1,30 @@
 .career-card-root {
   flex-shrink: 0;
   perspective: 1200px;
-  width: min(168px, 42vw);
+}
+
+.career-card-root--stack {
+  width: min(288px, 88vw);
+}
+
+.career-card-root--gallery {
+  width: min(172px, 44vw);
+}
+
+.career-card-root--expanded {
+  width: min(360px, 92vw);
+}
+
+.career-card-root--front-only {
+  pointer-events: none;
+}
+
+.career-card-root--front-only .career-card {
+  cursor: default;
+}
+
+.career-card__inner--static {
+  transform: none;
 }
 
 .career-card {
@@ -52,31 +75,40 @@
 .career-card__face--back {
   transform: rotateY(180deg);
   background: linear-gradient(165deg, #1a2332 0%, #0d1218 100%);
-  padding: 12px 12px 10px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  position: relative;
   text-align: left;
   font-size: 11px;
   line-height: 1.35;
   color: #c8d0dc;
+  overflow: hidden;
 }
 
-.career-card__ribbon {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.career-card__back-scroller {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 12px 11px 10px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.career-card__back-scroller::-webkit-scrollbar {
+  width: 5px;
+}
+
+.career-card__back-scroller::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 4px;
 }
 
 .career-card__art {
@@ -177,22 +209,6 @@
   opacity: 0;
 }
 
-.career-card__one-of-one {
-  position: absolute;
-  bottom: 36px;
-  right: 8px;
-  z-index: 5;
-  font-size: 22px;
-  font-weight: 900;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.25);
-  text-shadow:
-    0 0 20px rgba(56, 189, 248, 0.5),
-    1px 1px 0 rgba(0, 0, 0, 0.8);
-  transform: rotate(-12deg);
-  letter-spacing: 0.02em;
-}
-
 .career-card__corner {
   position: absolute;
   width: 22px;
@@ -200,6 +216,10 @@
   z-index: 5;
   pointer-events: none;
   opacity: 0;
+}
+
+.career-card__corner.is-hidden {
+  display: none;
 }
 
 .career-card__corner--tl {
@@ -260,7 +280,7 @@
 }
 
 .career-card--rare .career-card__foil {
-  opacity: 0.22;
+  opacity: 0.12;
   background: linear-gradient(
     125deg,
     rgba(255, 0, 128, 0.15) 0%,
@@ -276,7 +296,7 @@
 }
 
 .career-card--epic .career-card__foil {
-  opacity: 0.45;
+  opacity: 0.22;
   mix-blend-mode: color-dodge;
   background: conic-gradient(
     from 45deg at 50% 50%,
@@ -301,7 +321,7 @@
 }
 
 .career-card--epic .career-card__shine {
-  opacity: 0.15;
+  opacity: 0.07;
   background: repeating-linear-gradient(
     0deg,
     transparent,
@@ -312,18 +332,18 @@
   mix-blend-mode: overlay;
 }
 
-/* —— Legendary: sapphire + 1/1 —— */
+/* —— Legendary: sapphire —— (decorative corner hidden in TSX to avoid clashing with printed rarity) */
 .career-card--legendary .career-card__face--front {
   border-color: rgba(56, 189, 248, 0.75);
   box-shadow:
     0 0 0 1px rgba(14, 165, 233, 0.35),
-    0 0 40px rgba(14, 165, 233, 0.25),
-    0 8px 32px rgba(0, 0, 0, 0.55),
-    inset 0 0 60px rgba(56, 189, 248, 0.08);
+    0 0 22px rgba(14, 165, 233, 0.14),
+    0 8px 28px rgba(0, 0, 0, 0.55),
+    inset 0 0 48px rgba(56, 189, 248, 0.06);
 }
 
 .career-card--legendary .career-card__foil {
-  opacity: 0.55;
+  opacity: 0.2;
   mix-blend-mode: plus-lighter;
   background:
     radial-gradient(ellipse at 30% 20%, rgba(125, 211, 252, 0.4), transparent 50%),
@@ -351,13 +371,13 @@
     transform: scale(1);
   }
   50% {
-    filter: hue-rotate(-15deg) brightness(1.15);
-    transform: scale(1.02);
+    filter: hue-rotate(-8deg) brightness(1.05);
+    transform: scale(1.01);
   }
 }
 
 .career-card--legendary .career-card__shine {
-  opacity: 0.35;
+  opacity: 0.12;
   background: linear-gradient(
     105deg,
     transparent 35%,
@@ -377,10 +397,10 @@
 @keyframes legendaryGlint {
   0%,
   100% {
-    transform: translate(-20%, -20%);
+    transform: translate(-8%, -8%);
   }
   50% {
-    transform: translate(15%, 25%);
+    transform: translate(6%, 10%);
   }
 }
 
@@ -398,7 +418,7 @@
 }
 
 .career-card--bonus .career-card__foil {
-  opacity: 0.35;
+  opacity: 0.18;
   mix-blend-mode: screen;
   background: conic-gradient(
     from 90deg,
@@ -416,25 +436,34 @@
 }
 
 /* Back face typography */
-.career-card__company {
-  margin: 0;
-  font-size: 9px;
-  font-weight: 700;
+.career-card__role-line {
+  margin: 0 0 4px;
+  font-size: 8px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
+  color: #94a3b8;
+}
+
+.career-card__company {
+  margin: 0 0 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: #38bdf8;
 }
 
 .career-card__back-title {
-  margin: 6px 0 2px;
-  font-size: 13px;
+  margin: 0 0 4px;
+  font-size: 14px;
   font-weight: 800;
   color: #f8fafc;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .career-card__theme {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 9px;
   font-weight: 600;
   color: #94a3b8;
@@ -443,73 +472,109 @@
 }
 
 .career-card__body {
-  margin: 0 0 8px;
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  font-size: 10px;
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: 1.45;
   color: #cbd5e1;
 }
 
-.career-card__special {
-  margin: 0 0 8px;
-  font-size: 9px;
-  font-weight: 700;
-  color: #fcd34d;
+.career-card__special-badge {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 10px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  color: #0f172a;
+  background: linear-gradient(90deg, #fcd34d, #fbbf24);
+  border-radius: 4px;
+  border: 1px solid rgba(180, 83, 9, 0.45);
+}
+
+.career-card__stats-panel {
+  margin-top: 4px;
+  padding: 10px 10px 8px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.career-card__stats-heading {
+  margin: 0 0 8px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748b;
 }
 
 .career-card__stats {
   margin: 0;
-  padding: 8px 0 0;
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
-  display: grid;
-  gap: 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .career-card__stat-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-  align-items: baseline;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.45);
+}
+
+.career-card__stat-row:last-child {
+  border-bottom: none;
+  padding-bottom: 2px;
 }
 
 .career-card__stat-row dt {
   margin: 0;
   font-size: 8px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #64748b;
+  letter-spacing: 0.07em;
+  color: #94a3b8;
 }
 
 .career-card__stat-row dd {
   margin: 0;
+  width: 100%;
   font-family: ui-monospace, monospace;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
-  color: #e2e8f0;
-  text-align: right;
+  color: #f1f5f9;
+  text-align: left;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .career-card__flavor {
-  margin: 8px 0 0;
+  margin: 10px 0 4px;
   font-size: 9px;
   font-style: italic;
   color: #94a3b8;
+  line-height: 1.4;
 }
 
 .career-card__tap-hint {
-  margin: 6px 0 0;
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(71, 85, 105, 0.35);
   font-size: 8px;
-  color: #475569;
+  color: #64748b;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .career-card__foil--back {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   opacity: 0.06;
   mix-blend-mode: overlay;
   background: linear-gradient(
@@ -517,6 +582,8 @@
     rgba(56, 189, 248, 0.5),
     rgba(192, 132, 252, 0.3)
   );
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 @media (prefers-reduced-motion: reduce) {
