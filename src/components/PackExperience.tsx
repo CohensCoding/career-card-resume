@@ -379,16 +379,6 @@ export function PackExperience() {
         )}
       </AnimatePresence>
 
-      <footer className="pack-experience__footer">
-        <a
-          className="pack-experience__resume-link"
-          href="/jake-cohen-resume-2026.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Full résumé (PDF)
-        </a>
-      </footer>
     </div>
   )
 }

@@ -1,0 +1,242 @@
+/* Detail view CSS copied verbatim from design HTML (scoped under .file-inspector root). */
+.file-inspector {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 60;
+  padding: 2.5rem 3rem 1.5rem;
+  background: linear-gradient(180deg, #f4efe6 0%, #d8d0c0 100%);
+}
+
+@keyframes detail-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.file-inspector.detail-in {
+  animation: detail-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.file-inspector .dv-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(26, 26, 36, 0.12);
+}
+
+.file-inspector .dv-top-left .breadcrumb {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 0.5rem;
+}
+
+.file-inspector .dv-top-left .title {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: clamp(1.8rem, 2.8vw, 2.3rem);
+  color: var(--ink);
+  line-height: 1;
+}
+
+.file-inspector .dv-close {
+  background: transparent;
+  border: none;
+  color: var(--ink-mute);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+}
+
+.file-inspector .dv-close:hover {
+  color: var(--ink);
+}
+
+.file-inspector .dv-body {
+  flex: 1;
+  display: flex;
+  gap: 5rem;
+  padding: 4rem 1rem 2rem;
+  align-items: center;
+  min-height: 0;
+}
+
+.file-inspector .dv-icon-stage {
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.22)) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.12));
+  animation: float-large 5s ease-in-out infinite;
+}
+
+@keyframes float-large {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.file-inspector .dv-icon-stage svg {
+  width: 100%;
+  height: 100%;
+}
+
+.file-inspector .dv-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-width: 60ch;
+}
+
+.file-inspector .dv-filename {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.file-inspector .dv-name {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(2.6rem, 5vw, 3.8rem);
+  line-height: 1.05;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.file-inspector .dv-tags {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.file-inspector .dv-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid rgba(26, 26, 36, 0.2);
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.file-inspector .dv-description {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-top: 1.25rem;
+}
+
+.file-inspector .dv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.file-inspector .dv-meta strong {
+  color: var(--ink);
+  font-weight: 500;
+  margin-left: 0.35em;
+}
+
+.file-inspector .dv-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 2rem;
+}
+
+.file-inspector .dv-button {
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  color: #f4efe6;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-inspector .dv-button:hover {
+  background: var(--copper-2);
+  border-color: var(--copper-2);
+}
+
+.file-inspector .dv-button.secondary {
+  background: transparent;
+  color: var(--ink-soft);
+  border-color: rgba(26, 26, 36, 0.25);
+}
+
+.file-inspector .dv-button.secondary:hover {
+  background: rgba(26, 26, 36, 0.04);
+  color: var(--ink);
+  border-color: rgba(26, 26, 36, 0.4);
+}
+
+.file-inspector .dv-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.file-inspector .dv-button:disabled:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .file-inspector {
+    padding: 1.25rem 1.25rem 0.75rem;
+  }
+  .file-inspector .dv-body {
+    flex-direction: column;
+    padding: 1.5rem 0.5rem;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .file-inspector .dv-icon-stage {
+    width: 160px;
+    height: 160px;
+    align-self: center;
+  }
+}
+

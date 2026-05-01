@@ -1,0 +1,38 @@
+.landing-experience {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Tokens (verbatim from design file) */
+.landing-experience {
+  --bg-cream-1: #f4efe6;
+  --bg-cream-2: #e8e1d4;
+  --bg-cream-3: #d2c9b9;
+
+  --void: #0a0807;
+
+  --ink: #1a1a24;
+  --ink-soft: #3a3a48;
+  --ink-mute: #6a6a78;
+  --ink-faint: #9a9a9a;
+
+  --copper-1: #d4842a;
+  --copper-2: #b85c1a;
+  --copper-3: #8a4012;
+  --copper-pale: #f4d8a8;
+}
+
+.landing-experience * {
+  box-sizing: border-box;
+}
+
+.landing-experience .stage {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 25%, #faf6ed 0%, transparent 60%),
+    radial-gradient(ellipse 70% 90% at 15% 90%, #e0d8c8 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-cream-1) 0%, var(--bg-cream-2) 55%, var(--bg-cream-3) 100%);
+}
+

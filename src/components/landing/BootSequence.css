@@ -1,0 +1,447 @@
+/* Boot CSS copied verbatim from design HTML (scoped under .boot-sequence root). */
+.boot-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  cursor: default;
+  transition: opacity 0.8s ease;
+}
+
+.boot-sequence.gone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the bg layer that morphs cream -> black */
+.boot-sequence .boot-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 25%, #faf6ed 0%, transparent 60%),
+    radial-gradient(ellipse 70% 90% at 15% 90%, #e0d8c8 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-cream-1) 0%, var(--bg-cream-2) 55%, var(--bg-cream-3) 100%);
+  transition: opacity 1s ease;
+}
+
+.boot-sequence .boot-bg-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #1a1410 0%, var(--void) 70%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.boot-sequence.transitioning .boot-bg {
+  opacity: 0;
+}
+.boot-sequence.transitioning .boot-bg-dark,
+.boot-sequence.phase-2 .boot-bg-dark {
+  opacity: 1;
+}
+
+/* paper grain — only in phase 1 */
+.boot-sequence .boot-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(circle at 25% 35%, transparent 0px, transparent 1px, rgba(60, 40, 20, 0.025) 1px, transparent 2px),
+    radial-gradient(circle at 75% 65%, transparent 0px, transparent 1px, rgba(60, 40, 20, 0.025) 1px, transparent 2px);
+  background-size: 4px 4px, 6px 6px;
+}
+
+/* ===== diamond — persistent, transforms across phases ===== */
+.boot-sequence .boot-diamond {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(180px, 22vw, 240px);
+  height: clamp(180px, 22vw, 240px);
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  transition:
+    transform 1.4s cubic-bezier(0.65, 0, 0.35, 1),
+    filter 1.4s ease;
+  filter:
+    drop-shadow(0 16px 32px rgba(140, 60, 20, 0.18))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  z-index: 5;
+}
+
+/* during transition: scale up, spin, glow */
+.boot-sequence.transitioning .boot-diamond {
+  transform: translate(-50%, -50%) scale(1.45) rotate(360deg);
+  filter:
+    drop-shadow(0 0 40px rgba(244, 168, 80, 0.55))
+    drop-shadow(0 16px 36px rgba(140, 60, 20, 0.4));
+}
+
+.boot-sequence.phase-2 .boot-diamond {
+  transform: translate(-50%, calc(-50% - 40px)) scale(1.45) rotate(360deg);
+  filter:
+    drop-shadow(0 0 50px rgba(244, 168, 80, 0.6))
+    drop-shadow(0 16px 36px rgba(140, 60, 20, 0.45));
+}
+
+.boot-sequence .boot-diamond svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* construction lines — drawn first */
+.boot-sequence .construct-line {
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  fill: none;
+  stroke-dasharray: 130;
+  stroke-dashoffset: 130;
+  opacity: 0;
+}
+.boot-sequence.constructing .construct-line {
+  opacity: 0.85;
+  animation: boot-draw-stroke 0.45s cubic-bezier(0.5, 0.1, 0.4, 1) forwards;
+}
+.boot-sequence.constructing .l-1 {
+  animation-delay: 0s;
+}
+.boot-sequence.constructing .l-2 {
+  animation-delay: 0.45s;
+}
+.boot-sequence.constructing .l-3 {
+  animation-delay: 0.9s;
+}
+.boot-sequence.constructing .l-4 {
+  animation-delay: 1.35s;
+}
+
+@keyframes boot-draw-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* construction lines fade out as fill takes over */
+.boot-sequence.filled .construct-line {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* the filled face of the diamond */
+.boot-sequence .diamond-fill {
+  opacity: 0;
+  transform-origin: center;
+  transform: scale(0.7);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.boot-sequence.filled .diamond-fill {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* monogram */
+.boot-sequence .diamond-mono {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.35s;
+}
+.boot-sequence.filled .diamond-mono {
+  opacity: 1;
+}
+
+/* ===== System text (Phase 1 only) ===== */
+.boot-sequence .boot-system {
+  position: absolute;
+  top: calc(50% + clamp(120px, 14vw, 160px));
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  transition: opacity 0.6s ease;
+  z-index: 6;
+  opacity: 0;
+}
+
+.boot-sequence .system-line {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  margin: 0 auto;
+}
+
+.boot-sequence.system-typing .system-line-1 {
+  animation: boot-typewrite 0.9s steps(28) forwards;
+}
+.boot-sequence.system-typing .system-line-2 {
+  animation: boot-typewrite 0.7s steps(20) 1s forwards;
+  color: var(--copper-2);
+}
+
+.boot-sequence.system-typing .boot-system {
+  opacity: 1;
+}
+
+.boot-sequence.phase-2 .boot-system {
+  color: rgba(245, 241, 232, 0.55);
+}
+
+@keyframes boot-typewrite {
+  to {
+    width: 100%;
+  }
+}
+
+.boot-sequence .system-cursor {
+  display: inline-block;
+  width: 0.4em;
+  height: 0.85em;
+  background: currentColor;
+  margin-left: 0.15em;
+  vertical-align: text-bottom;
+  animation: boot-blink 0.7s infinite;
+}
+
+@keyframes boot-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.boot-sequence.transitioning .boot-system {
+  opacity: 0;
+}
+
+/* ===== Particles — burst OUTWARD during transition ===== */
+.boot-sequence .boot-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.boot-sequence .particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  margin-left: -0.5px;
+  margin-top: -9px;
+  background: linear-gradient(to top, rgba(255, 240, 200, 0) 0%, rgba(255, 245, 220, 1) 100%);
+  border-radius: 1px;
+  box-shadow: 0 0 4px rgba(255, 235, 180, 0.9);
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: center;
+}
+
+.boot-sequence.transitioning .particle {
+  animation: boot-particle-burst var(--dur, 1.4s) cubic-bezier(0.25, 0.5, 0.5, 1) var(--delay, 0s)
+    forwards;
+}
+
+/* particles START at center, fly OUTWARD with trail toward center */
+@keyframes boot-particle-burst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(var(--rot, 0deg)) scaleY(0.3);
+  }
+  8% {
+    opacity: 1;
+    transform: translate(calc(var(--x-end) * 0.1), calc(var(--y-end) * 0.1)) rotate(var(--rot, 0deg))
+      scaleY(1.4);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(calc(var(--x-end) * 0.85), calc(var(--y-end) * 0.85)) rotate(var(--rot, 0deg))
+      scaleY(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x-end), var(--y-end)) rotate(var(--rot, 0deg)) scaleY(0.2);
+  }
+}
+
+/* central flash at the moment of transition */
+.boot-sequence .boot-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 235, 1) 0%,
+    rgba(244, 168, 80, 0.5) 25%,
+    rgba(212, 132, 42, 0.15) 50%,
+    transparent 75%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.boot-sequence.transitioning .boot-flash {
+  animation: boot-flash-pulse 1.2s ease-out forwards;
+}
+
+@keyframes boot-flash-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(8);
+    opacity: 0;
+  }
+}
+
+/* ===== Phase 2: wordmark + CTA ===== */
+.boot-sequence .boot-wordmark {
+  position: absolute;
+  top: calc(50% + clamp(140px, 16vw, 180px));
+  left: 50%;
+  transform: translate(-50%, 12px);
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(3rem, 7.5vw, 5.5rem);
+  letter-spacing: -0.005em;
+  line-height: 1;
+  color: #f5f1e8;
+  opacity: 0;
+  transition: opacity 1s ease 0.4s, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s;
+  z-index: 6;
+  white-space: nowrap;
+}
+
+.boot-sequence.phase-2 .boot-wordmark {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.boot-sequence .boot-tag {
+  position: absolute;
+  top: calc(50% + clamp(220px, 24vw, 270px));
+  left: 50%;
+  transform: translate(-50%, 6px);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(244, 216, 168, 0.6);
+  opacity: 0;
+  transition: opacity 0.8s ease 1.1s, transform 0.8s ease 1.1s;
+  z-index: 6;
+  white-space: nowrap;
+}
+
+.boot-sequence.phase-2 .boot-tag {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.boot-sequence .boot-cta {
+  position: absolute;
+  bottom: clamp(3rem, 9vh, 5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.78rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 232, 0.55);
+  cursor: pointer;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.8s ease, color 0.25s;
+  z-index: 6;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+}
+
+.boot-sequence.phase-2.cta-ready .boot-cta {
+  opacity: 0.55;
+  animation: boot-cta-pulse 2.6s ease-in-out 0.2s infinite;
+}
+
+@keyframes boot-cta-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.boot-sequence .boot-cta:hover {
+  color: #f5f1e8;
+}
+
+/* corner / skip — colors update by phase */
+.boot-sequence .boot-corner {
+  position: absolute;
+  top: 1.75rem;
+  left: 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  z-index: 7;
+  transition: color 0.8s ease;
+}
+
+.boot-sequence.phase-2 .boot-corner,
+.boot-sequence.transitioning .boot-corner {
+  color: rgba(245, 241, 232, 0.25);
+}
+
+.boot-sequence .boot-skip {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  background: transparent;
+  border: none;
+  color: var(--ink-mute);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  z-index: 7;
+  transition: color 0.3s, opacity 0.4s;
+}
+
+.boot-sequence .boot-skip:hover {
+  color: var(--ink);
+}
+.boot-sequence.phase-2 .boot-skip,
+.boot-sequence.transitioning .boot-skip {
+  opacity: 0;
+  pointer-events: none;
+}
+

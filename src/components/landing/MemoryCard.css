@@ -1,0 +1,223 @@
+/* Memory card CSS copied verbatim from design HTML (scoped under .memory-card root). */
+.memory-card {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  padding: 2.5rem 3rem 1.5rem;
+  opacity: 0;
+  transition: opacity 1s ease;
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.memory-card.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.memory-card .mc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(26, 26, 36, 0.12);
+}
+
+.memory-card .mc-top-left .breadcrumb {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 0.5rem;
+}
+
+.memory-card .mc-top-left .title {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: clamp(1.8rem, 2.8vw, 2.3rem);
+  color: var(--ink);
+  line-height: 1;
+}
+
+.memory-card .mc-top-left .subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--ink-mute);
+  margin-top: 0.4rem;
+}
+
+.memory-card .mc-top-right {
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  line-height: 1.7;
+}
+
+.memory-card .mc-top-right .stat-value {
+  color: var(--ink);
+}
+
+.memory-card .mc-floor {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 2.5rem 1rem 2rem;
+  align-items: center;
+  justify-items: center;
+  min-height: 0;
+}
+
+.memory-card .slot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  padding: 0.75rem 0.5rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.memory-card .slot.focused,
+.memory-card .slot:hover:not(.empty) {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 1px rgba(26, 26, 36, 0.15);
+}
+
+.memory-card .slot-icon {
+  width: 70%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.18)) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.memory-card .slot:hover:not(.empty) .slot-icon,
+.memory-card .slot.focused:not(.empty) .slot-icon {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.memory-card .slot-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.memory-card .slot-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  line-height: 1.2;
+}
+
+.memory-card .slot.focused .slot-label,
+.memory-card .slot:hover:not(.empty) .slot-label {
+  opacity: 1;
+}
+
+.memory-card .slot.empty {
+  cursor: default;
+  opacity: 0.5;
+}
+.memory-card .slot.empty .slot-icon {
+  filter: none;
+  opacity: 0.6;
+}
+.memory-card .slot.empty:hover {
+  background: transparent;
+  box-shadow: none;
+}
+
+.memory-card .mc-cmd {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  padding: 1.25rem 1rem 0.5rem;
+  border-top: 1px solid rgba(26, 26, 36, 0.12);
+}
+
+.memory-card .cmd {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.memory-card .cmd-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.memory-card .cmd-button:hover {
+  color: var(--ink);
+}
+
+.memory-card .cmd-button:focus-visible {
+  outline: 2px solid rgba(26, 26, 36, 0.35);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+.memory-card .cmd-glyph {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+.memory-card .cmd-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .memory-card {
+    padding: 1.25rem 1.25rem 0.75rem;
+  }
+  .memory-card .mc-floor {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 0.5rem;
+    padding: 1.5rem 0;
+  }
+  .memory-card .slot {
+    max-width: 130px;
+  }
+  .memory-card .mc-cmd {
+    gap: 1.5rem;
+    padding: 0.75rem 0;
+    flex-wrap: wrap;
+  }
+}
+
